@@ -8,12 +8,14 @@ public class PlayerController : MonoBehaviour {
 	public float controlSensitivity = 0.8f;
 	public float maxSpeed = 10f;
 	private SurfaceMover surfaceMover;
+	private System.Action fireDebounced; 
 
 	// Use this for initialization
 	void Start () {
 		
 		mainCamera = GameObject.FindWithTag("MainCamera").transform;
 		surfaceMover = GetComponent<SurfaceMover>();
+		fireDebounced = Functional.Debounce(Fire, 0.2f);
 	}
 	
 	// Update is called once per frame
@@ -30,6 +32,10 @@ public class PlayerController : MonoBehaviour {
 			controlSensitivity);
 
 		transform.rotation = GetInputAngle();
+
+		if (Input.GetAxis("Fire1") > 0) {
+			fireDebounced();
+		}
 	}
 
 	private Quaternion GetInputAngle() {
@@ -37,6 +43,13 @@ public class PlayerController : MonoBehaviour {
 		Vector3 pointDir = touchPos - transform.position;
 		pointDir = Vector3.ProjectOnPlane(pointDir, transform.up);
 		return Quaternion.LookRotation(pointDir, transform.up);
+	}
+
+	public void Fire()
+	{
+		var bullet = Pool.instance.Take<SurfaceMover>();
+		bullet.transform.SetPositionAndRotation(transform.position, transform.rotation);
+		bullet.localVelocity = Vector3.forward * 5f;
 	}
 
 }
