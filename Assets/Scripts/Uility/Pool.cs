@@ -19,7 +19,7 @@ public class Pool : Singleton<Pool> {
 		return obj.GetComponent<T>();
 	}
 
-	public void Return<T>(T obj) where T : MonoBehaviour {
+	public void Return<T>(T obj) where T : Component {
 		GameObject go = obj.gameObject;
 		pool.Push(go);
 		go.SetActive(false);

@@ -25,7 +25,7 @@ public class SurfaceMover : MonoBehaviour {
 		Vector3 velocity = transform.TransformDirection(localVelocity);
 		Vector3 previousUp = transform.position - worldObject.position;
 
-		Vector3 newPos = transform.position + velocity * 0.033f;
+		Vector3 newPos = transform.position + velocity * Time.smoothDeltaTime;
 		Vector3 normal2 = newPos - worldObject.position;
 
 		// Following the trajectory will probably lift us off the surface

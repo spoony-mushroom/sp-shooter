@@ -23,7 +23,6 @@ public class PlayerFollow : MonoBehaviour {
 		Vector3 playerNormal = player.position - world.position;
 		float angularDiff = Vector3.Angle(cameraNormal, playerNormal);
 		Vector3 rotationAxis = Vector3.Cross(cameraNormal, playerNormal);
-
 		transform.RotateAround(world.position, rotationAxis, Mathf.Lerp(0, angularDiff, speed));
 	}
 }

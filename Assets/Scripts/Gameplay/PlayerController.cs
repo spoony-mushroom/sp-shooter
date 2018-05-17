@@ -6,16 +6,19 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
 	private Transform mainCamera;
 	public float controlSensitivity = 0.8f;
-	public float maxSpeed = 10f;
+	public Transform[] guns;
+	public float maxSpeed = 7f;
+	public float fireRate = 10f;
+	public float bulletSpeed = 20f;
 	private SurfaceMover surfaceMover;
-	private System.Action fireDebounced; 
+	private System.Action fireDebounced;
 
 	// Use this for initialization
 	void Start () {
 		
 		mainCamera = GameObject.FindWithTag("MainCamera").transform;
 		surfaceMover = GetComponent<SurfaceMover>();
-		fireDebounced = Functional.Debounce(Fire, 0.2f);
+		fireDebounced = Functional.Debounce(Fire, 1f / fireRate);
 	}
 	
 	// Update is called once per frame
@@ -45,11 +48,12 @@ public class PlayerController : MonoBehaviour {
 		return Quaternion.LookRotation(pointDir, transform.up);
 	}
 
-	public void Fire()
-	{
-		var bullet = Pool.instance.Take<SurfaceMover>();
-		bullet.transform.SetPositionAndRotation(transform.position, transform.rotation);
-		bullet.localVelocity = Vector3.forward * 5f;
+	public void Fire() {
+		foreach(Transform gun in guns) {
+			var bullet = Pool.instance.Take<SurfaceMover>();
+			bullet.transform.SetPositionAndRotation(gun.position, gun.rotation);
+			bullet.localVelocity = Vector3.forward * bulletSpeed;
+		}
 	}
 
 }

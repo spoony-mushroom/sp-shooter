@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(SurfaceMover))]
 public class Bullet : MonoBehaviour {
 
 	public float lifeSpan = 1f;
