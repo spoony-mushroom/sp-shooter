@@ -2,16 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelController : MonoBehaviour {
+public class LevelController : Singleton<LevelController> {
 
 	public GameObject[] powerUpPrefabs;
 	public GameObject[] enemyPrefabs;
+	public PlayerController playerPrefab; 
 	public int numPowerUps;
 	public int numEnemies;
 	private WorldController world;
 	// Use this for initialization
 	void Start () {
 		world = GameObject.FindWithTag("World").GetComponent<WorldController>();
+		SpawnPlayerShip();
 		SpawnPowerUps();
 		SpawnEnemies();
 	}
@@ -19,6 +21,12 @@ public class LevelController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
+	}
+
+	void SpawnPlayerShip()
+	{
+		var pos = world.radius * Vector3.up;
+		Instantiate(playerPrefab, pos, Quaternion.identity);
 	}
 
 	void SpawnPowerUps() {
@@ -30,6 +38,10 @@ public class LevelController : MonoBehaviour {
 	}
 
 	void SpawnEnemies() {
-
+		for (int i = 0; i < numEnemies; i++) {
+			int idx = Random.Range(0, enemyPrefabs.Length);
+			Vector3 pos = Random.onUnitSphere * world.radius;
+			GameObject.Instantiate(enemyPrefabs[idx], pos, Random.rotationUniform);
+		}
 	}
 }

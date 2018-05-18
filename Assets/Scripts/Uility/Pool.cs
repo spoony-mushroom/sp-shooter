@@ -2,26 +2,59 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pool : Singleton<Pool> {
-	
-	public GameObject prefab;
+public class Pool : MonoBehaviour
+{
 
-	private Stack<GameObject> pool = new Stack<GameObject>();
-	
-	public T Take<T>() {
-		GameObject obj = null;
-		if (pool.Count > 0) {
-			obj = pool.Pop();
-		} else {
-			obj = GameObject.Instantiate(prefab);
-		}
-		obj.SetActive(true);
-		return obj.GetComponent<T>();
-	}
+    public GameObject prototype;
 
-	public void Return<T>(T obj) where T : Component {
-		GameObject go = obj.gameObject;
-		pool.Push(go);
-		go.SetActive(false);
-	}
+    private List<GameObject> pool = new List<GameObject>();
+
+    int maxSize = 100;
+
+    public int MaxSize
+    {
+        get
+        {
+            return maxSize;
+        }
+
+        set
+        {
+            maxSize = value;
+        }
+    }
+
+    void Start()
+    {
+        Debug.Assert(prototype != null, "Pool does not have a prototype");
+    }
+
+    public T Take<T>() where T : Component
+    {
+        GameObject obj = null;
+        var iter = pool.GetEnumerator();
+        while (iter.MoveNext() && obj == null)
+        {
+			if (!iter.Current.activeSelf)
+			{
+            	obj = iter.Current;
+			}
+        }
+
+        if (obj == null)
+        {
+            if (pool.Count < maxSize)
+            {
+                obj = GameObject.Instantiate(prototype);
+                pool.Add(obj);
+            }
+            else
+            {
+				throw new System.OutOfMemoryException("Maximum pool size exceeded");
+            }
+        }
+
+		obj.gameObject.SetActive(true);
+        return obj.GetComponent<T>();
+    }
 }

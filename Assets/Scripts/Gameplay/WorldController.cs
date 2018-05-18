@@ -16,6 +16,6 @@ public class WorldController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {		
-		transform.localScale = Vector3.one * radius;
+		transform.localScale = Vector3.one * radius * 2;
 	}
 }

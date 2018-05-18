@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(SurfaceMover))]
+[RequireComponent(typeof(Pool))]
+[SelectionBase]
 public class PlayerController : MonoBehaviour {
 	private Transform mainCamera;
 	public float controlSensitivity = 0.8f;
@@ -13,12 +15,16 @@ public class PlayerController : MonoBehaviour {
 	private SurfaceMover surfaceMover;
 	private System.Action fireDebounced;
 
+	private Pool bulletPool;
+
 	// Use this for initialization
 	void Start () {
 		
 		mainCamera = GameObject.FindWithTag("MainCamera").transform;
 		surfaceMover = GetComponent<SurfaceMover>();
 		fireDebounced = Functional.Debounce(Fire, 1f / fireRate);
+
+		bulletPool = GetComponent<Pool>();
 	}
 	
 	// Update is called once per frame
@@ -50,10 +56,14 @@ public class PlayerController : MonoBehaviour {
 
 	public void Fire() {
 		foreach(Transform gun in guns) {
-			var bullet = Pool.instance.Take<SurfaceMover>();
+			var bullet = bulletPool.Take<Bullet>();
 			bullet.transform.SetPositionAndRotation(gun.position, gun.rotation);
-			bullet.localVelocity = Vector3.forward * bulletSpeed;
+			bullet.velocity = Vector3.forward * bulletSpeed;
 		}
 	}
 
+	void OnTriggerEnter(Collider other)
+	{
+		Debug.Log("Trigger enter");
+	}
 }
